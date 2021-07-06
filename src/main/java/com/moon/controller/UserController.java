@@ -70,6 +70,8 @@ public class UserController {
                         + " from partition: " + partition);
     }
 
+    @KafkaListener(topicPartitions= @TopicPartition(topic = "topicName", partitions = { "0", "1" }))   //If we don't need to set the offset, we can use the partitions property of @TopicPartition annotation to set only the partitions without the offset:
+
    @KafkaListener(
             topicPartitions = @TopicPartition(topic = "hero_topic",
                     partitionOffsets = {
@@ -82,5 +84,12 @@ public class UserController {
         System.out.println(
                 "Received Message for Listen To Partitions: " + message
                         + " from partition: " + partition);
+    }
+
+    @KafkaListener(
+            topics = "hero_topic",
+            containerFactory = "filterKafkaListenerContainerFactory")
+    public void listenWithFilter(String message) {
+        System.out.println("Received Message in filtered listener: " + message);
     }
 }

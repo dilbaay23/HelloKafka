@@ -25,6 +25,7 @@ public class KafkaConsumerConfig {
     private String bootstrapAddress;
     private String groupId= "foo";
 
+
     public ConsumerFactory<String, String> consumerFactory(String groupId2) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
@@ -74,6 +75,23 @@ public class KafkaConsumerConfig {
     @Bean
     public ConcurrentKafkaListenerContainerFactory<String, String> partitionsKafkaListenerContainerFactory() {
         return kafkaListenerContainerFactory("partitions");
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String> headersKafkaListenerContainerFactory() {
+        return kafkaListenerContainerFactory("headers");
+    }
+
+    @Bean
+    public ConcurrentKafkaListenerContainerFactory<String, String>
+    filterKafkaListenerContainerFactory() {
+
+        ConcurrentKafkaListenerContainerFactory<String, String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory());
+        factory.setRecordFilterStrategy(
+                record -> record.value().contains("World"));
+        return factory;
     }
 
 }
